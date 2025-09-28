@@ -1,11 +1,11 @@
 セットアップ手順
 
-1.リポジトリのクローンと初期化
+# 1.リポジトリのクローンと初期化
 git clone <your-repo-url>
 cd memo-service
 go mod tidy
 
-2.proto からコード生成
+# 2.proto からコード生成
 # プラグイン導入（未導入の場合）
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
@@ -13,13 +13,13 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 # PATH 設定（必要なら）
 export PATH="$PATH:$(go env GOPATH)/bin"
 
-# コード生成
+#コード生成
 protoc \
   --go_out=. --go_opt=paths=source_relative \
   --go-grpc_out=. --go-grpc_opt=paths=source_relative \
   api/memo.proto
 
-3.ローカル開発
+# 3.ローカル開発
 go run ./server/cmd/server
 
 # CLI クライアント使用例
@@ -32,7 +32,7 @@ go run ./client/cmd/cli get --id <ID>
 # メモ削除
 go run ./client/cmd/cli delete --id <ID>
 
-4.Dockerビルド／起動
+# 4.Dockerビルド／起動
 イメージビルド
 docker build -f Dockerfile.server -t memo-server:local .
 docker build -f Dockerfile.client -t memo-client:local .
@@ -41,7 +41,7 @@ docker build -f Dockerfile.client -t memo-client:local .
 docker run --rm -p 50051:50051 memo-server:local
 docker run --rm --network host memo-client:local list
 
-5. Kubernetes デプロイ(kind)
+# 5. Kubernetes デプロイ(kind)
 kind create cluster
 kind load docker-image memo-server:local
 
