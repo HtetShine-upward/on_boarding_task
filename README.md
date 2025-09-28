@@ -22,7 +22,7 @@ protoc \
 3.ローカル開発
 go run ./server/cmd/server
 
-CLI クライアント使用例
+# CLI クライアント使用例
 # メモ作成
 go run ./client/cmd/cli create --title "First" --content "hello"
 # メモ一覧
