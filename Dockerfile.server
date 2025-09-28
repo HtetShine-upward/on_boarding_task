@@ -1,0 +1,25 @@
+# -------- Build stage --------
+FROM golang:1.25 AS builder
+
+WORKDIR /app
+
+# 依存解決キャッシュ効率化
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+ENV CGO_ENABLED=0 GOOS=linux
+RUN go build -trimpath -ldflags="-s -w" -o /memo-server ./server/cmd/server
+
+# -------- Runtime stage --------
+FROM gcr.io/distroless/base-debian11
+
+# 環境変数でポートやログレベルを指定可能に
+ENV GRPC_ADDR="0.0.0.0:50051" \
+    LOG_LEVEL="info"
+
+COPY --from=builder /memo-server /memo-server
+
+EXPOSE 50051
+ENTRYPOINT ["/memo-server"]

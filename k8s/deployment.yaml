@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memo-server
+  namespace: memo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memo-server
+  template:
+    metadata:
+      labels:
+        app: memo-server
+    spec:
+      containers:
+        - name: server
+          image: memo-server:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GRPC_ADDR
+              value: "0.0.0.0:50051"
+            - name: LOG_LEVEL
+              value: "info"
+          ports:
+            - name: grpc
+              containerPort: 50051
+          # 最小のプローブ（将来は gRPC Health に置換推奨）
+          readinessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 50051
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+      # distroless:base-debian11 は root 実行。runAsNonRoot は付けません（nonroot に変えたら付与可）

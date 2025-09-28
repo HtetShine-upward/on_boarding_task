@@ -1,0 +1,30 @@
+syntax = "proto3";
+package memo.v1;
+option go_package = "example.com/memo/api/memo/v1;memo";
+
+message Memo {
+  string id = 1;        // サーバーでUUID生成
+  string title = 2;     // 1〜100文字
+  string content = 3;   // 0〜2000文字
+  int64  created_at = 4; // Unix epoch millis
+}
+
+message CreateMemoRequest { string title = 1; string content = 2; }
+message CreateMemoResponse { Memo memo = 1; }
+
+message GetMemoRequest { string id = 1; }
+message GetMemoResponse { Memo memo = 1; }
+
+message ListMemosRequest {}
+message ListMemosResponse { repeated Memo memos = 1; }
+
+message DeleteMemoRequest { string id = 1; }
+message DeleteMemoResponse {}
+
+service MemoService {
+  rpc CreateMemo(CreateMemoRequest) returns (CreateMemoResponse);
+  rpc GetMemo(GetMemoRequest) returns (GetMemoResponse);
+  rpc ListMemos(ListMemosRequest) returns (ListMemosResponse);
+  rpc DeleteMemo(DeleteMemoRequest) returns (DeleteMemoResponse);
+}
+
